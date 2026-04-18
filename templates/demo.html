@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecOps Pro - Interactive Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            50: '#f8fafc',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        matrix: {
+                            DEFAULT: '#00FF41',
+                            dark: '#00cc33',
+                            glow: 'rgba(0, 255, 65, 0.5)',
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"Fira Code"', 'monospace'],
+                        sans: ['"Fira Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Fira Sans', sans-serif;
+        }
+        .font-mono {
+            font-family: 'Fira Code', monospace;
+        }
+        .blinking-cursor::after {
+            content: '_';
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        /* Neon Effects */
+        .neon-text-green {
+            color: #00FF41;
+            text-shadow: 0 0 5px #00FF41, 0 0 10px #00FF41, 0 0 20px rgba(0, 255, 65, 0.5);
+        }
+        .neon-border-green {
+            border-color: #00FF41;
+            box-shadow: 0 0 5px rgba(0, 255, 65, 0.3), inset 0 0 5px rgba(0, 255, 65, 0.1);
+        }
+        .neon-glow-green {
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.4), 0 0 30px rgba(0, 255, 65, 0.2);
+        }
+        
+        /* Scanline Overlay */
+        .scanlines::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 65, 0.03) 2px,
+                rgba(0, 255, 65, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* Terminal Glow */
+        .terminal-glow {
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.15), inset 0 0 20px rgba(0, 255, 65, 0.05);
+        }
+    </style>
+</head>
+
+<body class="bg-black text-slate-50 min-h-screen flex flex-col font-sans relative scanlines">
+    <!-- Header -->
+    <header class="h-16 flex items-center justify-between px-8 border-b border-[#00FF41]/30 bg-black/90 backdrop-blur z-20 shadow-[0_0_15px_rgba(0,255,65,0.1)]">
+        <div class="flex items-center">
+            <i data-lucide="monitor-play" class="text-[#00FF41] w-6 h-6 mr-3 drop-shadow-[0_0_8px_rgba(0,255,65,0.8)]"></i>
+            <span class="font-bold text-lg tracking-wide font-mono neon-text-green">Interactive Demo Environment</span>
+        </div>
+        <div class="text-sm text-slate-400 max-w-lg text-right hidden md-block font-mono">
+            Trigger events here to see how your Security Controls react.
+        </div>
+    </header>
+
+    <!-- Main Content Split -->
+    <main class="flex-1 flex flex-col lg:flex-row">
+        
+        <!-- Left Side: Employee Portal -->
+        <section class="flex-1 p-8 lg:border-r border-[#00FF41]/20 bg-[#050505] min-h-[50vh]">
+            <div class="max-w-md mx-auto">
+                <div class="flex items-center mb-6 border-b border-[#00FF41]/30 pb-4">
+                    <div class="bg-[#00FF41]/10 p-3 rounded-full mr-4 border border-[#00FF41]/30">
+                        <i data-lucide="briefcase" class="w-6 h-6 text-[#00FF41] drop-shadow-[0_0_5px_rgba(0,255,65,0.5)]"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-200 font-mono">Employee Workspace</h2>
+                        <p class="text-[#00FF41]/60 text-sm font-mono">Simulate internal user activity.</p>
+                    </div>
+                </div>
+
+                <!-- Scenario 1 -->
+                <div class="bg-black/50 border border-[#00FF41]/20 rounded-xl p-5 mb-6 shadow-[0_0_15px_rgba(0,255,65,0.1)] hover:border-[#00FF41]/50 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-bold text-slate-200 font-mono">Access Financial Records</h3>
+                        <div id="acl-status-badge"></div>
+                    </div>
+                    <p class="text-slate-400 text-sm mb-4">Attempt to view restricted company financial data. This tests if your Access Control List (ACL) correctly restricts generic employees.</p>
+                    <button onclick="triggerEmployeeAction('access_financials', this)" class="w-full bg-[#00FF41]/10 hover:bg-[#00FF41]/20 text-[#00FF41] border border-[#00FF41]/50 hover:border-[#00FF41] py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center font-mono shadow-[0_0_10px_rgba(0,255,65,0.2)] hover:shadow-[0_0_20px_rgba(0,255,65,0.4)]">
+                        <i id="emp-icon" data-lucide="folder-lock" class="w-4 h-4 mr-2"></i> <span id="emp-text">Request Access</span>
+                    </button>
+                    <div class="mt-3 text-sm hidden font-mono px-3 py-3 rounded outcome-log break-words bg-black/70 border border-[#00FF41]/30"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Side: Attacker Terminal -->
+        <section class="flex-1 p-8 bg-black min-h-[50vh] relative">
+            <div class="max-w-md mx-auto">
+                <div class="flex items-center mb-6 border-b border-rose-500/30 pb-4">
+                    <div class="bg-rose-500/10 p-3 rounded-full mr-4 border border-rose-500/30">
+                        <i data-lucide="terminal" class="w-6 h-6 text-rose-500 drop-shadow-[0_0_5px_rgba(244,63,94,0.5)]"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-rose-400 font-mono">Attacker Terminal</h2>
+                        <p class="text-rose-400/60 text-sm font-mono">Tap any key on your keyboard to "hack".</p>
+                    </div>
+                </div>
+
+                <!-- Scenario 2 -->
+                <div class="bg-black/70 border border-rose-500/30 rounded-xl p-5 mb-6 shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:border-rose-500/50 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-bold text-rose-300 font-mono">Volumetric DDoS Attack</h3>
+                        <div id="ddos-status-badge"></div>
+                    </div>
+                    <p class="text-rose-200/50 text-sm mb-4">Flood the web server with traffic on port 80. This tests if your Firewall has the anti-DDoS drop rules active.</p>
+                    <button id="btn-ddos" onclick="startHackerTyper('launch_ddos', this)" class="w-full bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/50 hover:border-rose-400 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center font-mono shadow-[0_0_10px_rgba(244,63,94,0.2)] hover:shadow-[0_0_20px_rgba(244,63,94,0.4)]">
+                        <i data-lucide="zap" class="w-4 h-4 mr-2"></i> Open DDoS Terminal
+                    </button>
+                    <div class="mt-3 hidden rounded p-3 hacker-terminal bg-black border border-[#00FF41]/40 text-[#00FF41] font-mono text-xs max-h-48 overflow-y-auto break-all terminal-glow"></div>
+                </div>
+
+                <!-- Scenario 3 -->
+                <div class="bg-black/70 border border-rose-500/30 rounded-xl p-5 mb-6 shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:border-rose-500/50 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-bold text-rose-300 font-mono">Database SQL Injection</h3>
+                        <div id="db-status-badge"></div>
+                    </div>
+                    <p class="text-rose-200/50 text-sm mb-4">Attempt to inject malicious SQL queries to extract the user database. Generates an immediate critical security incident alert.</p>
+                    <button id="btn-sqli" onclick="startHackerTyper('sql_injection', this)" class="w-full bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/50 hover:border-rose-400 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center font-mono shadow-[0_0_10px_rgba(244,63,94,0.2)] hover:shadow-[0_0_20px_rgba(244,63,94,0.4)]">
+                        <i data-lucide="database" class="w-4 h-4 mr-2"></i> Open SQLi Terminal
+                    </button>
+                    <div class="mt-3 hidden rounded p-3 hacker-terminal bg-black border border-[#00FF41]/40 text-[#00FF41] font-mono text-xs max-h-48 overflow-y-auto break-all terminal-glow"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // --- Live Control Sync ---
+        async function fetchDemoState() {
+            try {
+                const res = await fetch('/api/controls/state');
+                const data = await res.json();
+                
+                const aclBadge = document.getElementById('acl-status-badge');
+                if (data.acls.includes("financials read employee")) {
+                    aclBadge.innerHTML = `<span class="px-2 py-1 text-[10px] uppercase rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 tracking-wider">Status: Allowed</span>`;
+                } else {
+                    aclBadge.innerHTML = `<span class="px-2 py-1 text-[10px] uppercase rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 tracking-wider font-bold">Status: Blocked</span>`;
+                }
+                
+                const ddosBadge = document.getElementById('ddos-status-badge');
+                if (data.firewall_rules.includes("drop any any 80")) {
+                    ddosBadge.innerHTML = `<span class="px-2 py-1 text-[10px] uppercase rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 tracking-wider">Firewall: Active</span>`;
+                } else {
+                    ddosBadge.innerHTML = `<span class="px-2 py-1 text-[10px] uppercase rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 tracking-wider font-bold">Firewall: Disabled</span>`;
+                }
+                
+                const dbBadge = document.getElementById('db-status-badge');
+                if (data.encryption.at_rest === "AES-256") {
+                    dbBadge.innerHTML = `<span class="px-2 py-1 text-[10px] uppercase rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 tracking-wider">DB: Encrypted</span>`;
+                } else {
+                    dbBadge.innerHTML = `<span class="px-2 py-1 text-[10px] uppercase rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 tracking-wider font-bold">DB: Plaintext</span>`;
+                }
+            } catch (e) { console.error(e); }
+        }
+        setInterval(fetchDemoState, 2000);
+        fetchDemoState();
+
+        // --- Employee Action (No Glitch) ---
+        async function triggerEmployeeAction(actionName, btnElement) {
+            const textSpan = btnElement.querySelector('span');
+            // Lucide converts <i> to <svg>, so we must select <svg>
+            const iconEl = btnElement.querySelector('svg') || btnElement.querySelector('i'); 
+            const originalText = textSpan ? textSpan.innerText : 'Request Access';
+            const outcomeDiv = btnElement.nextElementSibling;
+            
+            try {
+                // Loading state
+                btnElement.disabled = true;
+                if (textSpan) textSpan.innerText = "Executing...";
+                if (iconEl) iconEl.classList.add('animate-pulse');
+                
+                // Hide outcome box while loading to prevent empty spaces
+                if (outcomeDiv) {
+                    outcomeDiv.classList.add('hidden');
+                    outcomeDiv.classList.remove('bg-emerald-500/20', 'text-emerald-400', 'bg-rose-500/20', 'text-rose-400', 'bg-amber-500/20', 'text-amber-400');
+                }
+            
+                const response = await fetch('/api/demo/trigger', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: actionName })
+                });
+                const data = await response.json();
+
+                // Restore
+                setTimeout(() => {
+                    btnElement.disabled = false;
+                    textSpan.innerText = originalText;
+                    iconEl.classList.remove('animate-pulse');
+
+                    // Display
+                    outcomeDiv.classList.remove('hidden');
+                    outcomeDiv.classList.add('block');
+                    if (data.success) {
+                        outcomeDiv.classList.add('bg-emerald-500/20', 'text-emerald-400');
+                    } else {
+                        outcomeDiv.classList.add('bg-amber-500/20', 'text-amber-400');
+                    }
+                    outcomeDiv.innerText = `> ${data.message}`;
+                }, 800);
+
+            } catch (err) {
+                console.error(err);
+                btnElement.disabled = false;
+                textSpan.innerText = originalText;
+            }
+        }
+
+        // --- Hacker Typer Easter Egg ---
+        const payloads = {
+            "launch_ddos": "root@kali:~# hping3 --flood -d 120 -S -p 80 --rand-source 192.168.1.100\n[+] HPING 192.168.1.100: S set, 40 headers + 120 data bytes\n[+] hping in flood mode, no replies will be shown\n[!!!] Flooding target port 80...\n[!!!] Sending 100,000 packets per second...\n",
+            "sql_injection": "root@kali:~# sqlmap -u \"http://target.com/login?id=1\" --dbs\n[+] Testing connection to the target URL...\n[+] GET parameter 'id' is vulnerable (boolean-based blind)\n[+] injecting payload: 1' OR '1'='1' --\n[!] extracting database schema... \n[!!!] Schema harvested: 5 tables found.\n"
+        };
+        
+        let typingActive = false;
+        let currentPayload = "";
+        let currentTypedIdx = 0;
+        let currentAction = "";
+        let activeContainer = null;
+        let activeBtn = null;
+
+        function startHackerTyper(actionName, btnElement) {
+            if(typingActive) return; // Prevent multiple hacks at once
+            
+            activeBtn = btnElement;
+            activeContainer = btnElement.nextElementSibling;
+            
+            activeBtn.classList.add('hidden'); // Hide the open button
+            activeContainer.classList.remove('hidden');
+            
+            // Setup terminal
+            activeContainer.innerHTML = `<span class="text-slate-500">Wait for the target. Type any keys on your keyboard to inject payload...</span><br><br><span class="blinking-cursor"></span>`;
+            
+            currentAction = actionName;
+            currentPayload = payloads[actionName];
+            currentTypedIdx = 0;
+            typingActive = true;
+        }
+
+        document.addEventListener('keydown', async function(e) {
+            // Ignore system keys like F5, F12 so user can still reload
+            if(e.key.startsWith('F') || e.ctrlKey || e.altKey) return;
+            
+            if (!typingActive || !activeContainer) return;
+            e.preventDefault(); // Stop scrolling if they hit spacebar
+            
+            // Advance by ~5 characters per keystroke to make it fast
+            const charsToType = 6;
+            const newIdx = Math.min(currentTypedIdx + charsToType, currentPayload.length);
+            
+            let chunk = currentPayload.substring(currentTypedIdx, newIdx);
+            chunk = chunk.replace(/\n/g, '<br>');
+            
+            if(currentTypedIdx === 0) {
+                activeContainer.innerHTML = ""; // clear the prompt
+            } else {
+                // remove blushing cursor to append text
+                activeContainer.innerHTML = activeContainer.innerHTML.replace('<span class="blinking-cursor"></span>', '');
+            }
+            
+            activeContainer.innerHTML += chunk + '<span class="blinking-cursor"></span>';
+            currentTypedIdx = newIdx;
+            activeContainer.scrollTop = activeContainer.scrollHeight;
+
+            // Finished typing payload
+            if (currentTypedIdx >= currentPayload.length) {
+                typingActive = false;
+                activeContainer.innerHTML = activeContainer.innerHTML.replace('<span class="blinking-cursor"></span>', '');
+                activeContainer.innerHTML += "<br>[*] Payload delivered. Awaiting response...<br>";
+                activeContainer.scrollTop = activeContainer.scrollHeight;
+
+                try {
+                    const response = await fetch('/api/demo/trigger', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: currentAction })
+                    });
+                    const data = await response.json();
+
+                    setTimeout(() => {
+                        if (data.success) {
+                            activeContainer.innerHTML += `<br><span class="text-rose-500 font-bold bg-rose-500/10 p-1">> ${data.message}</span>`;
+                        } else {
+                            activeContainer.innerHTML += `<br><span class="text-amber-500 font-bold bg-amber-500/10 p-1">> ${data.message}</span>`;
+                        }
+                        
+                        activeContainer.innerHTML += `<br><br><button onclick="resetTyper()" class="text-slate-400 hover:text-white underline p-1 rounded">Clear Terminal</button>`;
+                        activeContainer.scrollTop = activeContainer.scrollHeight;
+                    }, 500); 
+
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        });
+
+        window.resetTyper = function() {
+            if(activeBtn && activeContainer) {
+                activeContainer.classList.add('hidden');
+                activeContainer.innerHTML = "";
+                activeBtn.classList.remove('hidden');
+            }
+            activeBtn = null;
+            activeContainer = null;
+        };
+    </script>
+</body>
+</html>

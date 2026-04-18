@@ -15,6 +15,21 @@ class IncidentResponseManager:
             {"type": "Phishing Compromise", "severity": "High", "description": "Multiple user accounts compromised via malicious email links."}
         ]
 
+    def log_incident(self, scenario_data):
+        incident = {
+            "id": f"INC-{random.randint(1000, 9999)}",
+            "timestamp": datetime.now().isoformat(),
+            "scenario": {
+                "type": scenario_data.get("type", "Unknown"),
+                "severity": scenario_data.get("severity", "High"),
+                "description": scenario_data.get("description", "")
+            },
+            "status": "Active"
+        }
+        self.incident_log.append(incident)
+        self.save_state()
+        return incident
+
     def simulate_breach(self):
         print("\n--- Simulating Security Breach ---")
         scenario = random.choice(self.breach_scenarios)
@@ -25,14 +40,7 @@ class IncidentResponseManager:
         print(f"Severity: {scenario['severity']}")
         print(f"Description: {scenario['description']}")
         
-        incident = {
-            "id": f"INC-{random.randint(1000, 9999)}",
-            "timestamp": datetime.now().isoformat(),
-            "scenario": scenario,
-            "status": "Active"
-        }
-        self.incident_log.append(incident)
-        self.save_state()
+        incident = self.log_incident(scenario)
         print(f"\nIncident {incident['id']} logged and escalated to active status.")
         return incident
 
