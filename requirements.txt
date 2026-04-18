@@ -1,0 +1,186 @@
+Read [](file:///c%3A/Users/COMC-PC/Desktop/Laboratory4_Latangga/skills/blueprint/SKILL.md)
+
+# Construction Plan: Interactive Security Policy Program
+
+**Objective:** Build an interactive Python program that guides users through the four phases of organizational security management: policy development, control implementation, compliance audits, and incident response.
+
+**Project Type:** Single-session Python CLI application with modular components.
+
+**Estimated Timeline:** 4-6 hours (single developer).
+
+**Risk Level:** Low — pure Python, no external dependencies beyond standard library.
+
+**Dependencies:** Python 3.8+, `rich` for CLI formatting (optional), `click` for CLI framework (optional).
+
+---
+
+## Step 1: Project Setup and Architecture Design
+**Context Brief:** Fresh session. Create a new Python project structure with modular design. Define classes for each security phase. No prior steps required.
+
+**Deliverables:**
+- main.py with CLI entry point
+- `security_policies.py` module for policy management
+- `security_controls.py` module for control implementation
+- `compliance_audits.py` module for audit functionality
+- `incident_response.py` module for breach simulation and response
+- `requirements.txt` with dependencies
+
+**Implementation:**
+1. Create project directory structure
+2. Define base classes and interfaces
+3. Set up basic CLI with menu system
+4. Add placeholder methods for each module
+
+**Validation:** Run `python main.py --help` to verify CLI setup.
+
+**Branch:** `feature/setup-architecture`
+
+---
+
+## Step 2: Implement Security Policy Development Module
+**Context Brief:** Fresh session. Implement the policy development phase. Focus on defining objectives, creating policies, and ensuring regulatory alignment. Use the existing `security_policies.py` file.
+
+**Deliverables:**
+- Complete `SecurityPolicyManager` class
+- Interactive prompts for defining objectives and scope
+- Policy templates for password management, network access, data protection
+- Regulatory compliance checks (GDPR, HIPAA placeholders)
+
+**Implementation:**
+1. Create policy template classes
+2. Implement interactive input collection
+3. Add validation for policy completeness
+4. Integrate with main CLI menu
+
+**Validation:** Test policy creation workflow end-to-end.
+
+**Branch:** `feature/policy-development`
+
+---
+
+## Step 3: Implement Security Controls Module
+**Context Brief:** Fresh session. Build the controls implementation phase. Configure firewall rules, encryption, and RBAC. Use the existing `security_controls.py` file.
+
+**Deliverables:**
+- Complete `SecurityControlsManager` class
+- Mock implementations for firewall rules and ACLs
+- Encryption setup simulation (data at rest/transit)
+- Role-based access control enforcement
+
+**Implementation:**
+1. Define control configuration classes
+2. Implement interactive setup wizards
+3. Add least privilege principle enforcement
+4. Connect to main CLI
+
+**Validation:** Verify control configuration saves state correctly.
+
+**Branch:** `feature/security-controls`
+
+---
+
+## Step 4: Implement Compliance Audit Module
+**Context Brief:** Fresh session. Develop the audit functionality. Use mock auditing tools to check compliance and generate reports. Use the existing `compliance_audits.py` file.
+
+**Deliverables:**
+- Complete `ComplianceAuditor` class
+- Mock Splunk/OpenVAS integration
+- Report generation for violations
+- Improvement suggestions system
+
+**Implementation:**
+1. Create audit check methods
+2. Implement report generation
+3. Add violation detection logic
+4. Integrate audit menu into CLI
+
+**Validation:** Run audit and verify report output.
+
+**Branch:** `feature/compliance-audits`
+
+---
+
+## Step 5: Implement Incident Response Module
+**Context Brief:** Fresh session. Build the incident response phase. Simulate breaches, analyze logs, and implement automated enforcement. Use the existing `incident_response.py` file.
+
+**Deliverables:**
+- Complete `IncidentResponseManager` class
+- Breach simulation scenarios
+- Log analysis functionality
+- Automated policy enforcement mechanisms
+
+**Implementation:**
+1. Define incident response workflows
+2. Implement breach simulation
+3. Add log parsing and analysis
+4. Create enforcement automation
+
+**Validation:** Test full incident response flow.
+
+**Branch:** `feature/incident-response`
+
+---
+
+## Step 6: Integration and Interactive Interface
+**Context Brief:** Fresh session. Combine all modules into cohesive interactive program. Enhance CLI with rich formatting and navigation. Use all existing modules.
+
+**Deliverables:**
+- Unified interactive CLI experience
+- State persistence between sessions
+- Progress tracking across phases
+- Final program executable
+
+**Implementation:**
+1. Integrate all modules in main.py
+2. Add navigation between phases
+3. Implement state saving/loading
+4. Polish UI/UX with rich formatting
+
+**Validation:** Full walkthrough of all four phases.
+
+**Branch:** `feature/integration-ui`
+
+---
+
+## Step 7: Testing and Documentation
+**Context Brief:** Fresh session. Test the complete program and create documentation. Ensure all features work interactively.
+
+**Deliverables:**
+- Comprehensive test suite
+- README.md with usage instructions
+- Demo walkthrough documentation
+
+**Implementation:**
+1. Write unit tests for each module
+2. Create integration tests
+3. Document installation and usage
+4. Record demo video/script
+
+**Validation:** All tests pass, program runs without errors.
+
+**Branch:** `feature/testing-docs`
+
+---
+
+## Branch Workflow Rules
+- Use feature branches for each step
+- Merge to main only after step validation
+- Tag releases at completion
+
+## CI Policy
+- Run tests on each push
+- Lint Python code with flake8
+- No blocking CI — manual review required
+
+## Rollback Strategy
+- Revert commits if integration fails
+- Keep backup of working state before major changes
+
+## Plan Mutation Protocol
+- Steps can be split if complexity increases
+- New steps inserted with audit trail in this document
+- Skip steps only with justification logged
+
+**Review Status:** Plan reviewed and approved for execution. No adversarial issues identified.
+
+Flask==2.3.2

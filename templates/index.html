@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            50: '#f8fafc',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-slate-900 text-slate-50 min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col hidden md:flex">
+        <div class="h-16 flex items-center px-6 border-b border-slate-800">
+            <i data-lucide="shield-check" class="text-indigo-500 w-6 h-6 mr-3"></i>
+            <span class="font-bold text-lg tracking-wide">SecOps Pro</span>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <button onclick="showSection('policies')"
+                class="w-full flex items-center px-4 py-3 text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded-lg transition-colors duration-200 cursor-pointer">
+                <i data-lucide="file-text" class="w-5 h-5 mr-3"></i>
+                <span class="font-medium">Policies</span>
+            </button>
+            <button onclick="showSection('controls')"
+                class="w-full flex items-center px-4 py-3 text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded-lg transition-colors duration-200 cursor-pointer">
+                <i data-lucide="lock" class="w-5 h-5 mr-3"></i>
+                <span class="font-medium">Controls</span>
+            </button>
+            <button onclick="showSection('audits')"
+                class="w-full flex items-center px-4 py-3 text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded-lg transition-colors duration-200 cursor-pointer">
+                <i data-lucide="activity" class="w-5 h-5 mr-3"></i>
+                <span class="font-medium">Audits</span>
+            </button>
+            <button onclick="showSection('incidents')"
+                class="w-full flex items-center px-4 py-3 text-slate-400 hover:text-slate-50 hover:bg-slate-800 rounded-lg transition-colors duration-200 cursor-pointer">
+                <i data-lucide="alert-triangle" class="w-5 h-5 mr-3"></i>
+                <span class="font-medium">Incidents</span>
+            </button>
+        </nav>
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">
+            System Status: <span class="text-emerald-500 font-medium">Online</span>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+
+        <!-- Header -->
+        <header
+            class="h-16 flex items-center justify-between px-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur">
+            <h1 id="page-title" class="text-xl font-semibold">Dashboard Overview</h1>
+            <div class="flex items-center">
+                <div
+                    class="bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full text-xs font-medium border border-indigo-500/30 flex items-center cursor-pointer hover:bg-indigo-500/30 transition-colors duration-200">
+                    <i data-lucide="user" class="w-3 h-3 mr-1"></i> Admin View
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-auto p-8">
+
+            <!-- Default Welcome Section -->
+            <section id="section-welcome" class="max-w-4xl mx-auto block">
+                <div class="bg-slate-800 border border-slate-700 rounded-xl p-8 text-center shadow-lg">
+                    <div
+                        class="w-16 h-16 bg-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="shield" class="w-8 h-8"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-4">Welcome to SecOps Pro</h2>
+                    <p class="text-slate-400 mb-8 max-w-lg mx-auto">Your centralized dashboard for organizational
+                        security management. Navigate through the sidebar to view your policies, controls, audits, and
+                        incidents.</p>
+                    <div class="flex items-center justify-center space-x-4">
+                        <button onclick="showSection('policies')"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors duration-200 cursor-pointer flex items-center">
+                            Get Started <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sections (Hidden by default) -->
+            <section id="section-policies" class="max-w-5xl mx-auto hidden">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center"><i data-lucide="file-text"
+                        class="w-6 h-6 mr-3 text-indigo-400"></i> Security Policies</h2>
+                <div id="policies-content" class="bg-slate-800 border border-slate-700 rounded-xl p-6 min-h-[300px]">
+                    <div class="flex justify-center items-center h-40 text-slate-500">
+                        Loading policies...
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-controls" class="max-w-5xl mx-auto hidden">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center"><i data-lucide="lock"
+                        class="w-6 h-6 mr-3 text-indigo-400"></i> Active Controls</h2>
+                <div id="controls-content" class="bg-slate-800 border border-slate-700 rounded-xl p-6 min-h-[300px]">
+                    <div class="flex justify-center items-center h-40 text-slate-500">
+                        Loading controls state...
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-audits" class="max-w-5xl mx-auto hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-semibold flex items-center"><i data-lucide="activity"
+                            class="w-6 h-6 mr-3 text-indigo-400"></i> Compliance Audits</h2>
+                    <button onclick="conductAudit()"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 cursor-pointer text-sm flex items-center">
+                        <i data-lucide="play" class="w-4 h-4 mr-2"></i> Run Audit (Splunk/OpenVAS)
+                    </button>
+                </div>
+                <div id="audits-content" class="space-y-4">
+                    <div
+                        class="flex justify-center items-center h-40 text-slate-500 bg-slate-800 border border-slate-700 rounded-xl">
+                        Loading audit history...
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-incidents" class="max-w-5xl mx-auto hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-semibold flex items-center"><i data-lucide="alert-triangle"
+                            class="w-6 h-6 mr-3 text-rose-500"></i> Incident Response</h2>
+                    <button onclick="simulateIncident()"
+                        class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 cursor-pointer text-sm flex items-center shadow-lg shadow-rose-900/20">
+                        <i data-lucide="zap" class="w-4 h-4 mr-2"></i> Simulate Breach
+                    </button>
+                </div>
+                <!-- Active Incident Alert -->
+                <div id="active-incident-alert"
+                    class="hidden mb-6 bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 flex items-start">
+                    <div class="bg-rose-500/20 p-2 rounded-full mr-4">
+                        <i data-lucide="alert-circle" class="w-6 h-6 text-rose-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-rose-400 font-bold mb-1">Active Breach Detected!</h3>
+                        <p id="active-incident-desc" class="text-rose-300 text-sm mb-3">...</p>
+                        <div class="flex space-x-3">
+                            <button
+                                class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 px-3 py-1.5 rounded text-xs font-medium transition-colors cursor-pointer"
+                                onclick="analyzeLogs()">Analyze Logs</button>
+                            <button
+                                class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors cursor-pointer"
+                                onclick="enforcePolicies()">Automated Enforcement</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="incidents-content" class="space-y-4">
+                    <div
+                        class="flex justify-center items-center h-40 text-slate-500 bg-slate-800 border border-slate-700 rounded-xl">
+                        Loading incident history...
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- UI Scripts -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Navigation logic
+        const sections = ['welcome', 'policies', 'controls', 'audits', 'incidents'];
+
+        function showSection(sectionId) {
+            sections.forEach(sec => {
+                document.getElementById(`section-${sec}`).classList.add('hidden');
+                document.getElementById(`section-${sec}`).classList.remove('block');
+            });
+            document.getElementById(`section-${sectionId}`).classList.remove('hidden');
+            document.getElementById(`section-${sectionId}`).classList.add('block');
+
+            // Set title
+            const titles = {
+                'policies': 'Security Policies',
+                'controls': 'Active Controls',
+                'audits': 'Compliance Audits',
+                'incidents': 'Incident Response'
+            };
+            if (titles[sectionId]) document.getElementById('page-title').innerText = titles[sectionId];
+
+            // Fetch relevant data
+            if (sectionId === 'policies') fetchPolicies();
+            if (sectionId === 'controls') fetchControls();
+            if (sectionId === 'audits') fetchAudits();
+            if (sectionId === 'incidents') fetchIncidents();
+        }
+
+        // ---------- API Fetchers ----------
+
+        async function fetchPolicies() {
+            try {
+                const res = await fetch('/api/policies/state');
+                const data = await res.json();
+                const container = document.getElementById('policies-content');
+                if (!data.policies || Object.keys(data.policies).length === 0) {
+                    container.innerHTML = `<div class="text-slate-400 text-center py-8">No policies defined yet. Navigate to the CLI to set them up.</div>`;
+                    return;
+                }
+                let html = `<div class="grid gap-4 md:grid-cols-2">`;
+                for (const [key, pol] of Object.entries(data.policies)) {
+                    html += `
+                        <div class="bg-slate-900 border border-slate-700 rounded-lg p-5">
+                            <h3 class="text-lg font-bold text-slate-200 mb-2 capitalize">${key.replace('_', ' ')}</h3>
+                            <p class="text-sm text-slate-400 mb-3">${pol.content || "Standard policy definitions."}</p>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                Active
+                            </span>
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+                container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function fetchControls() {
+            try {
+                const res = await fetch('/api/controls/state');
+                const data = await res.json();
+                const container = document.getElementById('controls-content');
+
+                let html = `<div class="grid gap-6 md:grid-cols-2">`;
+
+                // Encryption Card
+                html += `
+                <div class="bg-slate-900 border border-slate-700 rounded-xl p-5">
+                    <h3 class="text-lg font-bold text-slate-200 mb-4 flex items-center"><i data-lucide="key" class="w-5 h-5 mr-2 text-indigo-400"></i> Encryption</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center bg-slate-800 p-3 rounded border border-slate-700">
+                            <span class="text-sm text-slate-400">Data at Rest</span>
+                            <span class="text-sm font-medium ${data.encryption.at_rest ? 'text-emerald-400' : 'text-rose-400'}">${data.encryption.at_rest || 'Not configured'}</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-800 p-3 rounded border border-slate-700">
+                            <span class="text-sm text-slate-400">Data in Transit</span>
+                            <span class="text-sm font-medium ${data.encryption.in_transit ? 'text-emerald-400' : 'text-rose-400'}">${data.encryption.in_transit || 'Not configured'}</span>
+                        </div>
+                    </div>
+                </div>`;
+
+                // Firewall Rules Card
+                let firewallRows = data.firewall_rules.length ? data.firewall_rules.map(r => `<div class="p-2 bg-slate-800 border border-slate-700 rounded text-xs font-mono text-slate-300">${r}</div>`).join('') : '<p class="text-sm text-slate-500 italic">No rules defined.</p>';
+                html += `
+                <div class="bg-slate-900 border border-slate-700 rounded-xl p-5">
+                    <h3 class="text-lg font-bold text-slate-200 mb-4 flex items-center"><i data-lucide="shield" class="w-5 h-5 mr-2 text-indigo-400"></i> Firewall Rules</h3>
+                    <div class="space-y-2 max-h-32 overflow-y-auto pr-2">
+                        ${firewallRows}
+                    </div>
+                </div>`;
+
+                // ACLs Card
+                let aclRows = data.acls.length ? data.acls.map(a => `<div class="flex items-center space-x-2 text-sm text-slate-300 bg-slate-800 p-2 rounded border border-slate-700"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i><span>${a}</span></div>`).join('') : '<p class="text-sm text-slate-500 italic">No ACLs defined.</p>';
+                html += `
+                <div class="bg-slate-900 border border-slate-700 rounded-xl p-5">
+                    <h3 class="text-lg font-bold text-slate-200 mb-4 flex items-center"><i data-lucide="list" class="w-5 h-5 mr-2 text-indigo-400"></i> Access Control Lists (ACLs)</h3>
+                    <div class="space-y-2 max-h-32 overflow-y-auto pr-2">
+                        ${aclRows}
+                    </div>
+                </div>`;
+
+                // RBAC Card
+                let rolesCount = Object.keys(data.rbac.roles || {}).length;
+                let usersCount = Object.keys(data.rbac.users || {}).length;
+                html += `
+                <div class="bg-slate-900 border border-slate-700 rounded-xl p-5">
+                    <h3 class="text-lg font-bold text-slate-200 mb-4 flex items-center"><i data-lucide="users" class="w-5 h-5 mr-2 text-indigo-400"></i> Role-Based Access (RBAC)</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-800 p-4 rounded text-center border border-slate-700">
+                            <div class="text-2xl font-bold text-indigo-400">${rolesCount}</div>
+                            <div class="text-xs text-slate-400 uppercase tracking-wide mt-1">Roles Defined</div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded text-center border border-slate-700">
+                            <div class="text-2xl font-bold text-indigo-400">${usersCount}</div>
+                            <div class="text-xs text-slate-400 uppercase tracking-wide mt-1">Users Assigned</div>
+                        </div>
+                    </div>
+                </div>`;
+
+                html += `</div>`;
+                container.innerHTML = html;
+                lucide.createIcons(); // refresh icons for dynamically added HTML
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // ---------- Audits ----------
+        async function fetchAudits() {
+            try {
+                const res = await fetch('/api/audits/history');
+                const data = await res.json();
+                const container = document.getElementById('audits-content');
+
+                if (data.length === 0) {
+                    container.innerHTML = `<div class="bg-slate-800 border border-slate-700 rounded-xl p-8 text-center text-slate-400">No audits run yet. Format a manual audit to check compliance.</div>`;
+                    return;
+                }
+
+                let html = `<div class="flex flex-col gap-4">`;
+                [...data].reverse().forEach(record => {
+                    const isClean = record.total_violations === 0;
+                    const badgeClass = isClean ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border-rose-500/20";
+                    const badgeText = isClean ? "Passed" : `${record.total_violations} Violations`;
+
+                    html += `
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 hover:border-slate-600 transition-colors">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-xs font-mono text-slate-500">${new Date(record.timestamp).toLocaleString()}</span>
+                                    <h3 class="text-lg font-bold text-slate-200 mt-1">System Compliance Scan</h3>
+                                </div>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${badgeClass}">
+                                    ${badgeText}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function conductAudit() {
+            document.getElementById('audits-content').innerHTML = `
+                <div class="bg-slate-800 border border-slate-700 rounded-xl p-8 text-center">
+                    <i data-lucide="loader-2" class="w-8 h-8 text-indigo-500 mx-auto animate-spin mb-4"></i>
+                    <p class="text-slate-400">Running Splunk & OpenVAS Simulations...</p>
+                </div>
+            `;
+            // Re-bind spinning icon temporarily
+            lucide.createIcons();
+
+            try {
+                const res = await fetch('/api/audits/conduct', { method: 'POST' });
+                await res.json();
+                setTimeout(fetchAudits, 1000);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // ---------- Incidents ----------
+        async function fetchIncidents() {
+            try {
+                const res = await fetch('/api/incidents/history');
+                const data = await res.json();
+                const container = document.getElementById('incidents-content');
+
+                // Show active alert if there is one
+                const active = data.find(inc => inc.status !== "Resolved");
+                const alertBox = document.getElementById('active-incident-alert');
+                if (active) {
+                    alertBox.classList.remove('hidden');
+                    document.getElementById('active-incident-desc').innerText = `[${active.id}] ${active.scenario.type} - ${active.scenario.description}`;
+                } else {
+                    alertBox.classList.add('hidden');
+                }
+
+                if (data.length === 0) {
+                    container.innerHTML = `<div class="bg-slate-800 border border-slate-700 rounded-xl p-8 text-center text-slate-400">No security incidents logged in the system.</div>`;
+                    return;
+                }
+
+                let html = `<div class="flex flex-col gap-4">`;
+                [...data].reverse().forEach(inc => {
+                    let statusColor = "text-slate-400 bg-slate-500/10 border-slate-500/20";
+                    if (inc.status === "Active") statusColor = "text-rose-400 bg-rose-500/10 border-rose-500/20 animate-pulse";
+                    if (inc.status === "Analyzed") statusColor = "text-amber-400 bg-amber-500/10 border-amber-500/20";
+                    if (inc.status === "Resolved") statusColor = "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
+
+                    html += `
+                        <div class="bg-slate-800 border ${inc.status === 'Active' ? 'border-rose-500/30 shadow-lg shadow-rose-900/10' : 'border-slate-700'} rounded-xl p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <div class="flex items-center space-x-3 mb-1">
+                                        <span class="text-sm font-bold text-slate-300">${inc.id}</span>
+                                        <span class="text-xs font-mono text-slate-500">${new Date(inc.timestamp).toLocaleString()}</span>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-slate-100">${inc.scenario.type}</h3>
+                                </div>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded font-medium border text-xs ${statusColor}">
+                                    ${inc.status}
+                                </span>
+                            </div>
+                            <p class="text-slate-400 text-sm">${inc.scenario.description}</p>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function simulateIncident() {
+            try {
+                await fetch('/api/incidents/simulate', { method: 'POST' });
+                fetchIncidents();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // Note: For a true web app, analyze_logs and automated_enforcement would be hooked up exactly like simulate, 
+        // passing the incident ID. But to keep it simple, we just mock it out locally for UI completeness:
+        function analyzeLogs() {
+            const btn = event.target;
+            btn.innerText = "Analyzing...";
+            setTimeout(() => {
+                alert("Logs analyzed! Forwarding to enforcement module...");
+                document.getElementById('active-incident-alert').classList.add('hidden');
+                // You'd add an API call here to actually transition the status.
+            }, 1000);
+        }
+        function enforcePolicies() {
+            const btn = event.target;
+            btn.innerText = "Isolating...";
+            setTimeout(() => {
+                alert("Threat isolated and system secured.");
+                document.getElementById('active-incident-alert').classList.add('hidden');
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>
